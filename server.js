@@ -21,18 +21,6 @@ app.engine('html', require('ejs').renderFile);
 app.set('view engine', 'html');
 app.set('views', path.join(__dirname, 'views'));
 
-// const storage = multer.diskStorage({
-//   destination: (req, file, cb) => {
-//     db(null,'public/upload/');
-//  },
-//  filename: (req, file, cb) => {
-//   db(null, file.fieldname + '_' + Date.now() + '.' + path.extname(file.originalname))
-//   }})
-//   const upload = multer({
-//     storage: storage
-//   })
-// Connection Pool
-
 var db = mysql.createConnection({
   host:process.env.HOST,
   user:process.env.USER,
