@@ -1,5 +1,4 @@
 const express = require('express');
-const fileUpload = require('express-fileupload');
 const mysql = require('mysql');
 const dotenv = require('dotenv');
 const multer = require('multer');
@@ -9,17 +8,25 @@ dotenv.config();
 const app = express();
 const port = process.env.PORT || 5000;
 
-// default option
-app.use(fileUpload());
+const storage = multer.diskStorage({
+  destination: function (req, file, callback) {
+    callback(null, 'upload')
+  },
+  filename: function (req, file, callback) {
+    callback(null, file.originalname)
+  }
+})
 
+const upload = multer({ storage })
+
+// default option
+app.use(express.json())
 // Static Files
 app.use(express.static('public'));
-app.use('/upload', express.static(path.join(__dirname, 'upload')));
-
-
-app.engine('html', require('ejs').renderFile);
-app.set('view engine', 'html');
-app.set('views', path.join(__dirname, 'views'));
+app.use('/upload', express.static('upload'));
+// app.engine('html', require('ejs').renderFile);
+// app.set('view engine', 'html');
+// app.set('views', path.join(__dirname, 'views'));
 
 var db = mysql.createConnection({
   host:process.env.HOST,
@@ -38,57 +45,26 @@ db.connect(function(err){
 
 
 app.get('/', (req, res) => {
-  db.query('SELECT profile_image FROM user', (err, rows) => {
-      if (err) {
-          console.error(err);
-          return res.status(500).send('Database query failed');
-      }
-      const profileImage = rows[0]?.profile_image || 'default.jpg'; // Fallback to a default image
-      res.render('index', { profileImage });
+  res.sendFile(__dirname + '/views/index.html');
   });
-});
 
-app.get('/api/user', (req, res) => {
-  db.query('SELECT profile_image FROM user WHERE id = 0', (err, results) => {
-      if (err) {
-          console.error(err);
-          return res.status(500).json({ error: 'Database error' });
-      }
-      if (results.length > 0) {
-          res.json({ profile_image: results[0].profile_image });
-      } else {
-          res.json({ profile_image: null });
-      }
-  });
-});
 
-app.post('/', (req, res) => {
-  let sampleFile;
-  let uploadPath;
+app.post('/upload', upload.single('sampleFile'), (req, res) => {
+  const { name } = req.body;
+  const file = req.file;
 
-  if (!req.files || Object.keys(req.files).length === 0) {
-    return res.status(400).send('No files were uploaded.');
+  if (!file || !name) {
+    return res.status(400).send('Name and image are required.');
   }
-
-  // name of the input is sampleFile
-  sampleFile = req.files.sampleFile;
-  uploadPath = __dirname + '/upload/' + sampleFile.name;
-
-  console.log(sampleFile);
-  console.log('Upload Path:', uploadPath);
-
-  // Use mv() to place file on the server
-  sampleFile.mv(uploadPath, function (err) {
-    if (err) return res.status(500).send("post gone wrong");
-
-      db.query('UPDATE user SET profile_image = ? WHERE id ="0"', [sampleFile.name], (err, rows) => {
-        if (!err) {
-          res.redirect('/');
-        } else {
-          console.log(err);
-        }
-      });
-    });
+  const query = 'INSERT INTO user (name, profile_image) VALUES (?,?)';
+  const values = [name,file.filename];
+  db.query(query,values, (err, result)=> {
+    if (err) {
+      return res.status(500).send('server error');
+  }
+  res.send({ message:file, id: result.insertId ,  url: `http://localhost:5000/upload/${file.filename}`});
+})
 });
+
 
 app.listen(port, () => console.log(`Listening on port ${port}`));
