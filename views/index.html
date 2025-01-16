@@ -1,0 +1,51 @@
+<style>
+    #container {
+        display: flex;
+        justify-content: center;
+    }
+    canvas {
+        position: absolute;
+    }
+</style>
+
+<!-- <canvas id="canvas"></canvas>
+
+<div id="container">
+    <video id="video-feed" height="560" width="720" autoplay></video>
+</div>
+
+<script src="./face-api.min.js"></script>
+<script src="./scripts.js"></script> -->
+
+<form action="/" method="POST" enctype="multipart/form-data">
+    <input type="file" name="sampleFile" accept="image/*" placeholder="image" required>
+    <input type="text" name="caption" placeholder="Caption" />
+    <button type="submit">Submit</button>
+</form>
+<div class="user-card">
+    <img id="profile_image" src="/upload/default.jpg" loading="lazy" alt="User Profile">
+</div>
+
+<script>
+    // Fetch the profile image from the API
+    fetch('/api/user')
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Failed to fetch profile image');
+            }
+            return response.json();
+        })
+        .then(data => {
+            const profileImageElement = document.getElementById('profile_image');
+            
+            if (data.profile_image) {
+                profileImageElement.src = `/upload/${data.profile_image}`;
+            } else {
+                profileImageElement.alt = "No profile image available";
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+</script>
+

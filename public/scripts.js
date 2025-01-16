@@ -28,7 +28,7 @@ const run = async()=>{
 
     /////OUR FACIAL RECOGNITION DATA
     // we KNOW who this is (Michael Jordan)
-    const refFace = await faceapi.fetchImage('https://i.postimg.cc/ydnQxYvS/2021-08-16-removebg-preview-modified.png')
+    const refFace = await faceapi.fetchImage('https://i.postimg.cc/q7FCHP89/userpfp.jpg')
     //we grab the reference image, and hand it to detectAllFaces method
     let refFaceAiData = await faceapi.detectAllFaces(refFace).withFaceLandmarks().withFaceDescriptors()
     let faceMatcher = new faceapi.FaceMatcher(refFaceAiData)
@@ -60,11 +60,11 @@ const run = async()=>{
 
             let label = faceMatcher.findBestMatch(descriptor).toString()
             // console.log(label)
-            let options = {label}
+            let options = {label: "Tae"}
             if(label.includes("unknown")){
-                options = {label: "No Match"}
+                options = {label: "Unknown subject..."}
             }
-            const drawBox = new faceapi.draw.DrawBox(detection.box, options )
+            const drawBox = new faceapi.draw.DrawBox(detection.box, options)
             drawBox.draw(canvas)
         })
         
