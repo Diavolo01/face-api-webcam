@@ -27,8 +27,9 @@ const run = async()=>{
     canvas.width = videoFeedEl.width
 
     /////OUR FACIAL RECOGNITION DATA
-    // we KNOW who this is (Michael Jordan)
-    const refFace = await faceapi.fetchImage('https://i.postimg.cc/q7FCHP89/userpfp.jpg')
+    // we KNOW who this is 
+    const refFace = await faceapi.fetchImage('http://localhost:5000/upload/1132268.jpg')
+
     //we grab the reference image, and hand it to detectAllFaces method
     let refFaceAiData = await faceapi.detectAllFaces(refFace).withFaceLandmarks().withFaceDescriptors()
     let faceMatcher = new faceapi.FaceMatcher(refFaceAiData)

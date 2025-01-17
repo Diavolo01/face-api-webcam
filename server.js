@@ -63,6 +63,7 @@ app.post('/upload', upload.single('sampleFile'), (req, res) => {
       return res.status(500).send('server error');
   }
   res.send({ message:file, id: result.insertId ,  url: `http://localhost:5000/upload/${file.filename}`});
+  console.log('upload successful');
 })
 });
 
