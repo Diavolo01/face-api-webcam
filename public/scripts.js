@@ -33,8 +33,8 @@ const run = async()=>{
     const imageUrls = data.imageUrls
 
     if (imageUrls.length>0) {
-    const refFace = await faceapi.fetchImage(imageUrls[1])
-    console.log('Reference image loaded', imageUrls[1])
+    const refFace = await faceapi.fetchImage(imageUrls[0])
+    console.log('Reference image loaded', imageUrls[0])
     
     //we grab the reference image, and hand it to detectAllFaces method
     let refFaceAiData = await faceapi.detectAllFaces(refFace).withFaceLandmarks().withFaceDescriptors()
