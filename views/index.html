@@ -4,56 +4,15 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Hello Multer</title>
+    <title>Face API Test</title>
   </head>
   <body>
-    <h1>Hello Multer</h1>
-    <form id="uploadForm" action="/upload" method="post" enctype="multipart/form-data">
-      <!-- File input with label -->
-      <label for="sampleFile">Select a file:</label>
-      <input type="file" id="sampleFile" name="sampleFile" required />
-      
-      <!-- Name input with label -->
-      <br><br>
-      <label for="name">Name:</label>
-      <input type="text" id="name" name="name" placeholder="Enter your name" required />
+    <canvas id="canvas"></canvas>
 
-      <!-- Submit button -->
-      <br><br>
-      <button type="submit">Upload</button>
-    </form>
+    <div id="container">
+        <video id="video-feed" height="560" width="720" autoplay></video>
+    </div>
 
-    <h2>Uploaded Image</h2>
-    <img id="uploadedImage" src="" alt="Uploaded image will appear here" style="max-width: 500px; display: none;" />
-
-    <script>
-      // Handle form submission
-      document.getElementById('uploadForm').addEventListener('submit', function(event) {
-        event.preventDefault();  // Prevent default form submission
-
-        const formData = new FormData(this);  // Create FormData from the form
-
-        fetch('/upload', {
-          method: 'POST',
-          body: formData,
-        })
-        .then(response => response.json())  // Parse the JSON response from the server
-        .then(data => {
-          if (data.url) {
-            // Update the image source with the uploaded image URL
-            const imgElement = document.getElementById('uploadedImage');
-            imgElement.src = data.url;
-            imgElement.style.display = 'block';  // Make the image visible
-          } else {
-            alert('Error: ' + data.message);
-          }
-        })
-        .catch(error => {
-          console.error('Error:', error);
-          alert('Upload failed!');
-        });
-      });
-    </script>
   </body>
 </html>
 
@@ -68,40 +27,10 @@
 </style> 
 
 
-<canvas id="canvas"></canvas>
 
-<div id="container">
-    <video id="video-feed" height="560" width="720" autoplay></video>
-</div>
 
 <script src="./face-api.min.js"></script>
 <script src="./scripts.js"></script> 
 
-<!-- <div class="user-card">
-    <img id="profile_image" src="/upload/default.jpg" loading="lazy" alt="User Profile">
-</div>  -->
 
-
-<!-- <script>
-    // Fetch the profile image from the API
-    fetch('/api/user')
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Failed to fetch profile image');
-            }
-            return response.json();
-        })
-        .then(data => {
-            const profileImageElement = document.getElementById('profile_image');
-            
-            if (data.profile_image) {
-                profileImageElement.src = `/upload/${data.profile_image}`;
-            } else {
-                profileImageElement.alt = "No profile image available";
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-        });
-</script> -->
 

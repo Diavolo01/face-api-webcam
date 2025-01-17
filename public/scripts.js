@@ -28,8 +28,14 @@ const run = async()=>{
 
     /////OUR FACIAL RECOGNITION DATA
     // we KNOW who this is 
-    const refFace = await faceapi.fetchImage('http://localhost:5000/upload/1132268.jpg')
+    const response = await fetch('http://localhost:5000/image-url')
+    const data = await response.json()
+    const imageUrls = data.imageUrls
 
+    if (imageUrls.length>0) {
+    const refFace = await faceapi.fetchImage(imageUrls[1])
+    console.log('Reference image loaded', imageUrls[1])
+    
     //we grab the reference image, and hand it to detectAllFaces method
     let refFaceAiData = await faceapi.detectAllFaces(refFace).withFaceLandmarks().withFaceDescriptors()
     let faceMatcher = new faceapi.FaceMatcher(refFaceAiData)
@@ -71,7 +77,7 @@ const run = async()=>{
         
 
     },200)
-
+    }
 }
 
 run()
