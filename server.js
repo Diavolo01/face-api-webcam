@@ -126,16 +126,28 @@ app.post("/multipleupload", upload.array("manyFiles", 5), async (req, res) => {
     return res.status(400).send("Name and at least one image are required.");
   }
 
+  // Create a folder for the user based on the name
+  const userFolder = path.join(__dirname, "upload", name);
+  if (!fs.existsSync(userFolder)) {
+    fs.mkdirSync(userFolder, { recursive: true });  // Create the folder if it doesn't exist
+  }
+
   // Database Query Function
   const insertFile = async (file) => {
     return new Promise((resolve, reject) => {
+      // Move the file to the user-specific folder
+      const targetPath = path.join(userFolder, file.filename);
+      fs.renameSync(file.path, targetPath);  // Move the file
+
+      const imageUrl = `http://localhost:5000/upload/${name}/${file.filename}`;
+      
+      // Insert into the database
       const query = "INSERT INTO user (name, profile_image) VALUES (?,?)";
       const values = [name, file.filename];
 
       db.query(query, values, (err, result) => {
         if (err) return reject(err);
 
-        const imageUrl = `http://localhost:5000/upload/${file.filename}`;
         resolve({
           message: "Upload successful",
           id: result.insertId,
@@ -158,6 +170,5 @@ app.post("/multipleupload", upload.array("manyFiles", 5), async (req, res) => {
     res.status(500).send("Server error");
   }
 });
-
 
 app.listen(port, () => console.log(`Listening on port ${port}`));
